@@ -5,5 +5,62 @@
 {% endblock %}
 
 {% block body %}
-    <p>SPG</p>
+    <header>
+        <h1>Spotify Playlist Generator</h1>
+        <p>Generate playlists from billboard top 100 or something</p>
+    </header>
+
+    <main>
+        <div>
+            <form>
+                <h2>Chart Type</h2>
+                <select required>
+                    <option disabled>Chart</option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                </select>
+            </form>
+        </div>
+
+        <div>
+            <form>
+                <h2>Start Date</h2>
+                <input type="date" id="startDate" name="startDate" required>
+            </form>
+        </div>
+
+        <div>
+            <form>
+                <h2>End Date</h2>
+                <input type="date" id="endDate" name="endDate" required>
+            </form>
+        </div>
+
+        <div>
+            <form>
+                <h2>Name of Playlist</h2>
+                <input type="text" id="playlistName" name="playlistName" placeholder="Best of 2025 Playlist">
+            </form>
+        </div>
+
+        <div>
+            <form>
+                <h2>Amount of Songs</h2>
+                <input type="number" min="1" max="100" id="songAmount" name="songAmount" step="1" required>
+            </form>
+        </div>
+
+        <br>
+
+        <div>
+            <form>
+                <button type="submit">Generate Playlist</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <p>Copyright Patdabaker</p>
+    </footer>
 {% endblock %}
