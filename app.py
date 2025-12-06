@@ -23,4 +23,11 @@ def get_spotify_oauth():
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    chart_dict = {
+        "Hot 100": "hot100.csv",
+        "Billboard 200": "billboard200.csv",
+        "Digital Songs": "digital_songs.csv",
+        "Radio": "radio.csv",
+        "Streaming Songs": "streaming_songs.csv"
+    }
+    return render_template("index.html", chart_dict=chart_dict)

@@ -15,10 +15,14 @@
             <form>
                 <h2>Chart Type</h2>
                 <select required>
-                    <option disabled>Chart</option>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
+                    <option disabled selected>Chart</option>
+                    {% for title, file in chart_dict.items() %}
+                        {% if title == "Hot 100" %}
+                        <option>{{ title }} (Recommended)</option>
+                        {% else %}
+                        <option>{{ title }}</option>
+                        {% endif %}
+                    {% endfor %}
                 </select>
             </form>
         </div>
