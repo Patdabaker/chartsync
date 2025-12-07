@@ -14,13 +14,13 @@
         <div>
             <form>
                 <h2>Chart Type</h2>
-                <select required>
-                    <option disabled selected>Chart</option>
+                <select id="chart" name="chart" required>
+                    <option disabled selected value="">Select Chart</option>
                     {% for title, file in chart_dict.items() %}
                         {% if title == "Hot 100" %}
-                        <option>{{ title }} (Recommended)</option>
+                        <option value="{{ title }}">{{ title }} (Recommended)</option>
                         {% else %}
-                        <option>{{ title }}</option>
+                        <option value="{{ title }}">{{ title }}</option>
                         {% endif %}
                     {% endfor %}
                 </select>
@@ -28,16 +28,16 @@
         </div>
 
         <div>
-            <form>
+            <form class="date" id="startDate" hidden>
                 <h2>Start Date</h2>
-                <input type="date" id="startDate" name="startDate" required>
+                <input type="date" name="startDate" required>
             </form>
         </div>
 
         <div>
-            <form>
+            <form class="date" id="endDate" hidden>
                 <h2>End Date</h2>
-                <input type="date" id="endDate" name="endDate" required>
+                <input type="date" name="endDate" required>
             </form>
         </div>
 
@@ -67,4 +67,18 @@
     <footer>
         <p>Copyright Patdabaker</p>
     </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", (event) => {
+            const startDate = document.getElementById('startDate');
+            const endDate = document.getElementById('endDate');
+            const select = document.getElementById('chart');
+            select.addEventListener("change", () => {
+                if (select.value !== "") {
+                    startDate.hidden = false;
+                    endDate.hidden = false;
+                } 
+            });
+        });
+    </script>
 {% endblock %}
