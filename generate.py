@@ -16,7 +16,7 @@ FEATURE_PATTERNS = [
 ]
 
 
-def create_songlist(start, end, chart, amount):
+def create_songlist(start, end, chart, amount, omit=None):
     print("Reading Chart...")
     df = pd.read_csv(chart)
     filtered = df[
@@ -25,7 +25,7 @@ def create_songlist(start, end, chart, amount):
     ]
     i = 1
     sl = set()
-    songs = {}
+    songs = []
     print("Reading Chart Completed!")
     print("Creating Songlist...0%")
 
@@ -34,11 +34,17 @@ def create_songlist(start, end, chart, amount):
         for _, row in top.iterrows():
             title = row['Song']
             artist = row['Artist']
+            image = row['Image URL']
             dup = (title, artist) in sl
 
             if not dup:
-                sl.add((title, artist))
-                songs[title] = artist
+                if omit:
+                    if (title, artist) not in omit:
+                        sl.add((title, artist))
+                        songs.append([image, title, artist])                   
+                else:
+                    sl.add((title, artist))
+                    songs.append([image, title, artist])
         i += 1
         p = float(len(sl) / amount) * 100
         if p < 100:
@@ -73,8 +79,8 @@ def generate_playlist(songs, sp):
     urilist = []
     length = len(songs)
     print("Obtaining Track Ids...0%")
-    for title, artist in songs.items():
-        query = f"track:{title} artist:{extract_main_artist(artist)}"
+    for i in range(length):
+        query = f"track:{songs[i][1]} artist:{extract_main_artist(songs[i][2])}"
         result = sp.search(q=query, type="track", limit=1)
         track = result.get("tracks", {}).get("items", [])
         try:

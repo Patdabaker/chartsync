@@ -11,7 +11,10 @@
     </header>
 
     <main>
-        <form>
+        <div id="results" style="display: none">
+
+        </div>
+        <form action="/generate" method="post" id="form">
             <div>
                 <h2>Chart Type</h2>
                 <select id="chart" name="chart" required>
@@ -52,6 +55,10 @@
                 <button type="submit">Generate Playlist</button>
             </div>
         </form>
+
+        <div id="loading" style="display: none">
+
+        </div>
     </main>
 
     <footer>
@@ -64,6 +71,9 @@
             const startDate = document.getElementById('startDate');
             const endDate = document.getElementById('endDate');
             const select = document.getElementById('chart');
+            const form = document.getElementById('form');
+            const results = document.getElementById('results');
+            const loading = document.getElementById('loading');
             let startDateInput = document.getElementById('startDateInput');
             let endDateInput = document.getElementById('endDateInput');
             select.addEventListener("change", () => {
@@ -74,8 +84,49 @@
                     startDateInput.value = '';
                     endDateInput.value = '',
                     startDateInput.setAttribute('min', chartRanges[chart]['min']);
+                    startDateInput.setAttribute('max', chartRanges[chart]['max']);
+                    endDateInput.setAttribute('min', chartRanges[chart]['min']);
                     endDateInput.setAttribute('max', chartRanges[chart]['max']);
                 } 
+            });
+
+            form.addEventListener("submit", async (e) => {
+                // prevent form submit and page reload
+                e.preventDefault()
+                
+                // collect data from html form
+                const payload = {
+                    chart: form.chart.value,
+                    start: form.startDate.value,
+                    end: form.endDate.value,
+                    name: form.playlistName.value,
+                    amount: Number(form.songAmount.value)
+                };
+
+                // show loading message
+                loading.style.display = 'block';
+                loading.innerHTML = '<p>Generating Playlist... Please Wait</p>';
+    
+                // send data to python route
+                const res = await fetch("/generate", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(payload)
+                });
+
+                // receive data from python route
+                const data = await res.json();
+
+                // hide form
+                form.style.display = 'none';
+
+                // show results
+                results.style.display = 'block';
+                loading.style.display = 'none';
+                results.innerHTML = `
+                    <p>Test Successful :)</p>
+                `;
+
             });
         });
     </script>
