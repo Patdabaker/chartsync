@@ -74,8 +74,8 @@
             const form = document.getElementById('form');
             const results = document.getElementById('results');
             const loading = document.getElementById('loading');
-            let startDateInput = document.getElementById('startDateInput');
-            let endDateInput = document.getElementById('endDateInput');
+            const startDateInput = document.getElementById('startDateInput');
+            const endDateInput = document.getElementById('endDateInput');
             select.addEventListener("change", () => {
                 if (select.value !== "") {
                     startDate.hidden = false;
@@ -88,6 +88,18 @@
                     endDateInput.setAttribute('min', chartRanges[chart]['min']);
                     endDateInput.setAttribute('max', chartRanges[chart]['max']);
                 } 
+            });
+
+            startDateInput.addEventListener("change", () => {
+                if (endDateInput.value !== "" && startDateInput.value > endDateInput.value) {
+                    endDateInput.value = "";
+                }
+            });
+
+            endDateInput.addEventListener("change", () => {
+                if (startDateInput.value !== "" && endDateInput.value < startDateInput.value) {
+                    startDateInput.value = "";
+                }
             });
 
             form.addEventListener("submit", async (e) => {
@@ -123,8 +135,10 @@
                 // show results
                 results.style.display = 'block';
                 loading.style.display = 'none';
+                // TODO: FIX INNER HTML TO MAKE IT A WINDOW
                 results.innerHTML = `
-                    <p>Test Successful :)</p>
+                    <h2>${data.playlistName}</h2>
+                    <ol>${data.songs.map(song => `<li>${song}</li>`).join("")}</ol>
                 `;
 
             });

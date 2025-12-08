@@ -45,10 +45,10 @@ def create_songlist(start, end, chart, amount, omit=None):
                 else:
                     sl.add((title, artist))
                     songs.append([image, title, artist])
+            p = float(len(sl) / amount) * 100
+            if p < 100:
+                print(f"Creating Songlist...{p:.2f}%")
         i += 1
-        p = float(len(sl) / amount) * 100
-        if p < 100:
-            print(f"Creating Songlist...{p:.2f}%")
     p = 100
     print(f"Creating Songlist...{p}%")
     print("Songlist Completed!")

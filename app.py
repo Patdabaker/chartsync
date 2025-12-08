@@ -75,5 +75,5 @@ def generate():
         "endDate": end,
         "playlistName": name,
         "songAmount": amount,
-        "playlist": songs
+        "songs": songs
     })
