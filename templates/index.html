@@ -11,12 +11,12 @@
     </header>
 
     <main>
-        <div>
-            <form>
+        <form>
+            <div>
                 <h2>Chart Type</h2>
                 <select id="chart" name="chart" required>
                     <option disabled selected value="">Select Chart</option>
-                    {% for title, file in chart_dict.items() %}
+                    {% for title in chart_dict %}
                         {% if title == "Hot 100" %}
                         <option value="{{ title }}">{{ title }} (Recommended)</option>
                         {% else %}
@@ -24,44 +24,34 @@
                         {% endif %}
                     {% endfor %}
                 </select>
-            </form>
-        </div>
-
-        <div>
-            <form class="date" id="startDate" hidden>
+            </div>
+            
+            <div class="date" id="startDate" hidden>
                 <h2>Start Date</h2>
-                <input type="date" name="startDate" required>
-            </form>
-        </div>
-
-        <div>
-            <form class="date" id="endDate" hidden>
+                <input id="startDateInput" type="date" name="startDate" required>
+            </div>
+            
+            <div class="date" id="endDate" hidden>
                 <h2>End Date</h2>
-                <input type="date" name="endDate" required>
-            </form>
-        </div>
-
-        <div>
-            <form>
+                <input id="endDateInput" type="date" name="endDate" required>
+            </div>
+            
+            <div>
                 <h2>Name of Playlist</h2>
                 <input type="text" id="playlistName" name="playlistName" placeholder="Best of 2025 Playlist">
-            </form>
-        </div>
-
-        <div>
-            <form>
+            </div>
+            
+            <div>
                 <h2>Amount of Songs</h2>
                 <input type="number" min="1" max="100" id="songAmount" name="songAmount" step="1" required>
-            </form>
-        </div>
-
-        <br>
-
-        <div>
-            <form>
+            </div>
+            
+            <br>
+            
+            <div>
                 <button type="submit">Generate Playlist</button>
-            </form>
-        </div>
+            </div>
+        </form>
     </main>
 
     <footer>
@@ -69,14 +59,22 @@
     </footer>
 
     <script>
+        const chartRanges = {{ chart_dict | tojson }};
         document.addEventListener("DOMContentLoaded", (event) => {
             const startDate = document.getElementById('startDate');
             const endDate = document.getElementById('endDate');
             const select = document.getElementById('chart');
+            let startDateInput = document.getElementById('startDateInput');
+            let endDateInput = document.getElementById('endDateInput');
             select.addEventListener("change", () => {
                 if (select.value !== "") {
                     startDate.hidden = false;
                     endDate.hidden = false;
+                    let chart = select.value;
+                    startDateInput.value = '';
+                    endDateInput.value = '',
+                    startDateInput.setAttribute('min', chartRanges[chart]['min']);
+                    endDateInput.setAttribute('max', chartRanges[chart]['max']);
                 } 
             });
         });

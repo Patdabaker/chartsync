@@ -15,21 +15,6 @@ FEATURE_PATTERNS = [
     r"\s+featuring\s+"
 ]
 
-def extract_main_artist(artist_str):
-    s = artist_str.strip()
-
-    # Lowercase copy for searching
-    lower_s = s.lower()
-
-    for pattern in FEATURE_PATTERNS:
-        match = re.search(pattern, lower_s)
-        if match:
-            # Slice original string to preserve capitalization
-            cut_index = match.start()
-            return s[:cut_index].strip()
-
-    # No feature pattern — return unchanged
-    return s
 
 def create_songlist(start, end, chart, amount):
     print("Reading Chart...")
@@ -68,6 +53,22 @@ def cut_playlist(urilist, amount):
         urilist.pop()
     print("Cutting Process Completed!")
 
+def extract_main_artist(artist_str):
+    s = artist_str.strip()
+
+    # Lowercase copy for searching
+    lower_s = s.lower()
+
+    for pattern in FEATURE_PATTERNS:
+        match = re.search(pattern, lower_s)
+        if match:
+            # Slice original string to preserve capitalization
+            cut_index = match.start()
+            return s[:cut_index].strip()
+
+    # No feature pattern — return unchanged
+    return s
+
 def generate_playlist(songs, sp):
     urilist = []
     length = len(songs)
@@ -87,6 +88,10 @@ def generate_playlist(songs, sp):
     print(f"Obtaining Track Ids...{p}%")
     print("Obtained All Track Ids!")
     return urilist
+
+def get_dates(chart):
+    df = pd.read_csv(chart)
+    return (str(df['Date'].min()), str(df['Date'].max()))
 
 # if __name__ == '__main__':
 #     startyear = '2015'

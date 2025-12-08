@@ -4,6 +4,7 @@ import re
 import spotipy
 from dotenv import load_dotenv
 from flask import Flask, redirect, request, url_for, session, render_template
+from generate import create_songlist, cut_playlist, extract_main_artist, generate_playlist, get_dates
 from spotipy.oauth2 import SpotifyOAuth
 
 load_dotenv()
@@ -24,10 +25,25 @@ def get_spotify_oauth():
 @app.route("/")
 def index():
     chart_dict = {
-        "Hot 100": "hot100.csv",
-        "Billboard 200": "billboard200.csv",
-        "Digital Songs": "digital_songs.csv",
-        "Radio": "radio.csv",
-        "Streaming Songs": "streaming_songs.csv"
+        "Hot 100": {
+            "name": "hot100.csv"
+            },
+        "Billboard 200": {
+            "name": "billboard200.csv"
+            },
+        "Digital Songs": {
+            "name": "digital_songs.csv"
+            },
+        "Radio": {
+            "name": "radio.csv"
+            },
+        "Streaming Songs": {
+            "name": "streaming_songs.csv"
+            }
     }
+    for key in chart_dict:
+        chart = chart_dict[key]
+        dates = get_dates(chart["name"])
+        chart["min"], chart["max"] = dates[0], dates[1]
+
     return render_template("index.html", chart_dict=chart_dict)
