@@ -135,6 +135,12 @@
                 // show results
                 results.style.display = 'block';
                 loading.style.display = 'none';
+
+                if (!data.success) {
+                    // show error
+                    results.innerHTML = `<p class="error">${data.error}</p`;
+                    return;
+                }
                 // TODO: FIX INNER HTML TO MAKE IT A WINDOW
                 results.innerHTML = `
                     <h2>${data.playlistName}</h2>
