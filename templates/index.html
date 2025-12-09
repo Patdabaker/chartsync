@@ -54,6 +54,12 @@
             <div>
                 <button type="submit">Generate Playlist</button>
             </div>
+
+            <br>
+            
+            <div>
+                <button type="reset">Reset Fields</button>
+            </div>
         </form>
 
         <div id="loading" style="display: none">
@@ -102,6 +108,11 @@
                 }
             });
 
+            // reset fields
+            form.addEventListener("reset", () => {
+                form.reset();
+            });
+
             form.addEventListener("submit", async (e) => {
                 // prevent form submit and page reload
                 e.preventDefault()
@@ -145,7 +156,16 @@
                 results.innerHTML = `
                     <h2>${data.playlistName}</h2>
                     <ol>${data.songs.map(song => `<li>${song}</li>`).join("")}</ol>
+                    <button id="back" type="button">Back</button>
                 `;
+
+                // Add back button
+                const back = document.getElementById('back');
+                back.addEventListener("click", () => {
+                    results.style.display = 'none';
+                    form.style.display = 'block';
+                    results.innerHTML = '';
+                })
 
             });
         });
