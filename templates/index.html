@@ -173,16 +173,25 @@
                                 <td><img src=${song[1]} alt="album art" width="50" height="50"></td>
                                 <td>${song[2]}</td>
                                 <td>${song[3]}</td>
-                                <td><input type="checkbox"></td>
+                                <td><input type="checkbox" class="song-checkbox"></td>
                             </tr>
                             `)}
                         </tbody>
                     </table>
                     <button id="back" type="button">Back</button>
                     <button id="regenerate" type="button">Generate Again</button>
-                    <button id="deleteChecked" type="button">Delete Checked</button>
+                    <button id="deleteChecked" type="button">Remove Selected Songs</button>
                     <button id="add" type="button">Add to Playlist</button>
                 `;
+
+                // hides deleted rows based on checked checkboxes
+                document.getElementById("deleteChecked").addEventListener("click", () => {
+                    const checkboxes = document.querySelectorAll(".song-checkbox:checked");
+
+                    checkboxes.forEach(checkbox => {
+                        checkbox.closest("tr").style.display = 'none';
+                    });
+                });
 
                 // Add back button
                 const back = document.getElementById('back');
