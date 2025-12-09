@@ -1,7 +1,9 @@
+import base64
 import os
 import pandas as pd
-import re
+import requests
 import spotipy
+import urllib
 from datetime import datetime
 from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, request, url_for, session, render_template
@@ -13,6 +15,11 @@ load_dotenv()
 # Configure application
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
+client_id=os.getenv('SPOTIFY_CLIENT_ID')
+client_secret=os.getenv('SPOTIFY_CLIENT_SECRET')
+redirect_uri=os.getenv('SPOTIFY_REDIRECT_URI')
+scope=os.getenv('SPOTIFY_SCOPE'),
+username=os.getenv('SPOTIFY_USERNAME')
 
 chart_dict = {
     "Hot 100": {
@@ -36,20 +43,11 @@ for key in chart_dict:
     chart = chart_dict[key]
     dates = get_dates(chart["name"])
     chart["min"], chart["max"] = dates[0], dates[1]
-    
-def get_spotify_oauth():
-    return SpotifyOAuth(
-        client_id=os.getenv('SPOTIFY_CLIENT_ID'),
-        client_secret=os.getenv('SPOTIFY_CLIENT_SECRET'),
-        redirect_uri=os.getenv('SPOTIFY_REDIRECT_URI'),
-        scope=os.getenv('SPOTIFY_SCOPE'),
-        username=os.getenv('SPOTIFY_USERNAME')
-    )
 
 @app.route("/")
 def index():
-
-    return render_template("index.html", chart_dict=chart_dict)
+    username = session.get('username')
+    return render_template("index.html", chart_dict=chart_dict, username=username)
 
 @app.route("/generate", methods=["POST"])
 def generate():
@@ -65,6 +63,9 @@ def generate():
     name   = data['name']
     amount = data['amount']
     omit   = data['omit']
+
+    if name is None:
+        name = "SPG Generated Playlist"
 
     if chart is None:
         return jsonify({"success": False, "error": "Invalid Chart"}), 400
@@ -109,3 +110,36 @@ def generate():
         "songAmount": amount,
         "songs": songs
     })
+
+def get_spotify_oauth():
+    return SpotifyOAuth(
+        client_id=client_id,
+        client_secret=client_secret,
+        redirect_uri=redirect_uri,
+        scope=scope,
+        cache_path=None
+    )
+
+@app.route("/login")
+def login():
+    sp_oauth = get_spotify_oauth()
+    url = sp_oauth.get_authorize_url()
+    return redirect(url)
+
+@app.route("/callback")
+def callback():
+    sp_oauth = get_spotify_oauth()
+
+    code = request.args.get("code")
+
+    token_info = sp_oauth.get_access_token(code, as_dict=True)
+
+    session["token_info"] = token_info
+
+    sp = spotipy.Spotify(auth=token_info["access_token"])
+    profile = sp.current_user()
+
+    session["username"] = profile["display_name"]
+    session["user_id"] = profile["id"]
+    session["profile_pic"] = profile["images"][0]["url"] if profile["images"] else None
+    return redirect("/")

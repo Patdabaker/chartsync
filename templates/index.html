@@ -8,6 +8,19 @@
     <header>
         <h1>Spotify Playlist Generator</h1>
         <p>Generate playlists from billboard top 100 or something</p>
+        {% if username %}
+            <div class="user-info">
+                {% if session.profile_pic %}
+                    <img src="{{ session.profile_pic }}" alt="Profile Picture" width="40">
+                {% endif %}
+                <span>Welcome, {{ username }}!</span>
+            </div>
+        {% else %}
+        <button onclick="window.location.href='/login'">
+            Login with Spotify
+        </button>
+        {% endif %}
+
     </header>
 
     <main>
@@ -222,6 +235,7 @@
                 form.style.display = 'block';
                 results.innerHTML = '';
                 buttons.style.display = 'none';
+                omit = [];
             });
 
             // Regenerate playlist with deleted in mind

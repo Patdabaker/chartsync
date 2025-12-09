@@ -99,7 +99,7 @@ def generate_playlist(songs, sp):
     return urilist
 
 def get_dates(chart):
-    df = pd.read_csv(chart)
+    df = pd.read_csv(chart, dtype={4: str})
     return (str(df['Date'].min()), str(df['Date'].max()))
 
 def set_default_art(songs):
