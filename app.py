@@ -5,7 +5,7 @@ import spotipy
 from datetime import datetime
 from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, request, url_for, session, render_template
-from generate import create_songlist, cut_playlist, extract_main_artist, generate_playlist, get_dates
+from generate import create_songlist, cut_playlist, extract_main_artist, generate_playlist, get_dates, set_default_art
 from spotipy.oauth2 import SpotifyOAuth
 
 load_dotenv()
@@ -92,6 +92,7 @@ def generate():
     if len(songs) > amount:
         print("Playlist too large, cutting process starting")
         cut_playlist(songs, amount)
+    set_default_art(songs)
     # sp = spotipy.Spotify(auth=token)
     # uri = generate_playlist(songs, sp)
     # playlist = sp.user_playlist_create(SPOTIFY_USERNAME, name)

@@ -35,17 +35,18 @@ def create_songlist(start, end, chart, amount, omit=None):
             title = row['Song']
             artist = row['Artist']
             image = row['Image URL']
+            length = len(sl)
             dup = (title, artist) in sl
 
             if not dup:
                 if omit:
                     if (title, artist) not in omit:
                         sl.add((title, artist))
-                        songs.append([image, title, artist])                   
+                        songs.append([length + 1, image, title, artist])                   
                 else:
                     sl.add((title, artist))
-                    songs.append([image, title, artist])
-            p = float(len(sl) / amount) * 100
+                    songs.append([length + 1, image, title, artist])
+            p = float(length / amount) * 100
             if p < 100:
                 print(f"Creating Songlist...{p:.2f}%")
         i += 1
@@ -98,6 +99,11 @@ def generate_playlist(songs, sp):
 def get_dates(chart):
     df = pd.read_csv(chart)
     return (str(df['Date'].min()), str(df['Date'].max()))
+
+def set_default_art(songs):
+    for i in range(len(songs)):
+        if songs[i][1] == '#':
+            songs[i][1] = 'static/images/default_art.png'
 
 # if __name__ == '__main__':
 #     startyear = '2015'

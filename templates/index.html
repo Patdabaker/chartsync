@@ -56,7 +56,7 @@
             </div>
 
             <br>
-            
+
             <div>
                 <button type="reset">Reset Fields</button>
             </div>
@@ -155,8 +155,33 @@
                 // TODO: FIX INNER HTML TO MAKE IT A WINDOW
                 results.innerHTML = `
                     <h2>${data.playlistName}</h2>
-                    <ol>${data.songs.map(song => `<li>${song}</li>`).join("")}</ol>
+                    <p>Feel free to edit</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Img</th>
+                                <th>Title</th>
+                                <th>Artist</th>
+                                <th>Delete?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.songs.map(song => `
+                            <tr>
+                                <td>${song[0]}</td>
+                                <td><img src=${song[1]} alt="album art" width="50" height="50"></td>
+                                <td>${song[2]}</td>
+                                <td>${song[3]}</td>
+                                <td><input type="checkbox"></td>
+                            </tr>
+                            `)}
+                        </tbody>
+                    </table>
                     <button id="back" type="button">Back</button>
+                    <button id="regenerate" type="button">Generate Again</button>
+                    <button id="deleteChecked" type="button">Delete Checked</button>
+                    <button id="add" type="button">Add to Playlist</button>
                 `;
 
                 // Add back button
