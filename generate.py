@@ -40,9 +40,11 @@ def create_songlist(start, end, chart, amount, omit=None):
 
             if not dup:
                 if omit:
-                    if (title, artist) not in omit:
+                    if [title, artist] not in omit:
                         sl.add((title, artist))
-                        songs.append([length + 1, image, title, artist])                   
+                        songs.append([length + 1, image, title, artist]) 
+                    else:
+                        print("User Deleted Song...Skipping")                  
                 else:
                     sl.add((title, artist))
                     songs.append([length + 1, image, title, artist])

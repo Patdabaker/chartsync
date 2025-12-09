@@ -12,7 +12,12 @@
 
     <main>
         <div id="results" style="display: none">
-
+        </div>
+        <div id="buttons" style="display: none">
+            <button id="back" type="button">Back</button>
+            <button id="regenerate" type="button">Generate Again</button>
+            <button id="deleteChecked" type="button">Remove Selected Songs</button>
+            <button id="add" type="button">Add to Playlist</button>
         </div>
         <form action="/generate" method="post" id="form">
             <div>
@@ -70,9 +75,21 @@
     <footer>
         <p>Copyright Patdabaker</p>
     </footer>
-
+    
     <script>
         const chartRanges = {{ chart_dict | tojson }};
+        let omit = [];
+        function buildPayload(form, omit) {
+            // collect data from html form
+            return {
+                chart: form.chart.value,
+                start: form.startDate.value,
+                end: form.endDate.value,
+                name: form.playlistName.value,
+                amount: Number(form.songAmount.value),
+                omit: omit
+            };
+        }
         document.addEventListener("DOMContentLoaded", (event) => {
             const startDate = document.getElementById('startDate');
             const endDate = document.getElementById('endDate');
@@ -80,8 +97,67 @@
             const form = document.getElementById('form');
             const results = document.getElementById('results');
             const loading = document.getElementById('loading');
+            const buttons = document.getElementById('buttons');
             const startDateInput = document.getElementById('startDateInput');
             const endDateInput = document.getElementById('endDateInput');
+
+            async function generatePlaylist(payload) {
+                // show loading message
+                loading.style.display = 'block';
+                loading.innerHTML = '<p>Generating Playlist... Please Wait</p>';
+    
+                // send data to python route
+                const res = await fetch("/generate", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(payload)
+                });
+
+                // receive data from python route
+                const data = await res.json();
+
+                // hide form
+                form.style.display = 'none';
+
+                // show results
+                results.style.display = 'block';
+                buttons.style.display = 'block';
+                loading.style.display = 'none';
+
+                if (!data.success) {
+                    // show error
+                    results.innerHTML = `<p class="error">${data.error}</p`;
+                    return;
+                }
+                // TODO: FIX INNER HTML TO MAKE IT A WINDOW
+                results.innerHTML = `
+                    <h2>${data.playlistName}</h2>
+                    <p>Feel free to edit</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Img</th>
+                                <th>Title</th>
+                                <th>Artist</th>
+                                <th>Delete?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.songs.map(song => `
+                            <tr>
+                                <td>${song[0]}</td>
+                                <td><img src=${song[1]} alt="album art" width="50" height="50"></td>
+                                <td class="title">${song[2]}</td>
+                                <td class="artist">${song[3]}</td>
+                                <td><input type="checkbox" class="song-checkbox"></td>
+                            </tr>
+                            `)}
+                        </tbody>
+                    </table>
+                `;
+            };
+
             select.addEventListener("change", () => {
                 if (select.value !== "") {
                     startDate.hidden = false;
@@ -115,92 +191,42 @@
 
             form.addEventListener("submit", async (e) => {
                 // prevent form submit and page reload
-                e.preventDefault()
-                
-                // collect data from html form
-                const payload = {
-                    chart: form.chart.value,
-                    start: form.startDate.value,
-                    end: form.endDate.value,
-                    name: form.playlistName.value,
-                    amount: Number(form.songAmount.value)
-                };
+                e.preventDefault();
 
-                // show loading message
-                loading.style.display = 'block';
-                loading.innerHTML = '<p>Generating Playlist... Please Wait</p>';
-    
-                // send data to python route
-                const res = await fetch("/generate", {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify(payload)
+                generatePlaylist(buildPayload(form, omit));
+            });
+                        
+            // hides deleted rows based on checked checkboxes
+            document.getElementById("deleteChecked").addEventListener("click", () => {
+                const checkboxes = document.querySelectorAll(".song-checkbox:checked");
+
+                checkboxes.forEach(checkbox => {
+                    checkbox.closest("tr").style.display = 'none';            
                 });
 
-                // receive data from python route
-                const data = await res.json();
+                const rows = document.querySelectorAll("table tr");
 
-                // hide form
-                form.style.display = 'none';
-
-                // show results
-                results.style.display = 'block';
-                loading.style.display = 'none';
-
-                if (!data.success) {
-                    // show error
-                    results.innerHTML = `<p class="error">${data.error}</p`;
-                    return;
-                }
-                // TODO: FIX INNER HTML TO MAKE IT A WINDOW
-                results.innerHTML = `
-                    <h2>${data.playlistName}</h2>
-                    <p>Feel free to edit</p>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Img</th>
-                                <th>Title</th>
-                                <th>Artist</th>
-                                <th>Delete?</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${data.songs.map(song => `
-                            <tr>
-                                <td>${song[0]}</td>
-                                <td><img src=${song[1]} alt="album art" width="50" height="50"></td>
-                                <td>${song[2]}</td>
-                                <td>${song[3]}</td>
-                                <td><input type="checkbox" class="song-checkbox"></td>
-                            </tr>
-                            `)}
-                        </tbody>
-                    </table>
-                    <button id="back" type="button">Back</button>
-                    <button id="regenerate" type="button">Generate Again</button>
-                    <button id="deleteChecked" type="button">Remove Selected Songs</button>
-                    <button id="add" type="button">Add to Playlist</button>
-                `;
-
-                // hides deleted rows based on checked checkboxes
-                document.getElementById("deleteChecked").addEventListener("click", () => {
-                    const checkboxes = document.querySelectorAll(".song-checkbox:checked");
-
-                    checkboxes.forEach(checkbox => {
-                        checkbox.closest("tr").style.display = 'none';
-                    });
+                rows.forEach(row => {
+                    if (row.style.display === 'none') {
+                        const title = row.querySelector(".title").textContent;
+                        const artist = row.querySelector(".artist").textContent;
+                        omit.push([title, artist]);
+                    }
                 });
+            });
+            
+            // Add back button
+            const back = document.getElementById('back');
+            back.addEventListener("click", () => {
+                results.style.display = 'none';
+                form.style.display = 'block';
+                results.innerHTML = '';
+                buttons.style.display = 'none';
+            });
 
-                // Add back button
-                const back = document.getElementById('back');
-                back.addEventListener("click", () => {
-                    results.style.display = 'none';
-                    form.style.display = 'block';
-                    results.innerHTML = '';
-                })
-
+            // Regenerate playlist with deleted in mind
+            document.getElementById('regenerate').addEventListener("click", () => {
+                generatePlaylist(buildPayload(form, omit));
             });
         });
     </script>

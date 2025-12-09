@@ -64,6 +64,7 @@ def generate():
     end    = data['end']
     name   = data['name']
     amount = data['amount']
+    omit   = data['omit']
 
     if chart is None:
         return jsonify({"success": False, "error": "Invalid Chart"}), 400
@@ -88,7 +89,8 @@ def generate():
     if amount is None or isinstance(amount, float) or amount <= 0:
         return jsonify({"success": False, "error": "Invalid Song Amount"}), 400
 
-    songs = create_songlist(start, end, chart, amount)
+    print(omit)
+    songs = create_songlist(start, end, chart, amount, omit)
     if len(songs) > amount:
         print("Playlist too large, cutting process starting")
         cut_playlist(songs, amount)
@@ -96,8 +98,6 @@ def generate():
     # sp = spotipy.Spotify(auth=token)
     # uri = generate_playlist(songs, sp)
     # playlist = sp.user_playlist_create(SPOTIFY_USERNAME, name)
-    # if len(uri) > amount:
-    #     cut_playlist(uri, amount)
     # sp.playlist_add_items(playlist["id"], uri)
 
     return jsonify({
