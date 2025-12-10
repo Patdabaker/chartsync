@@ -78,25 +78,32 @@ def extract_main_artist(artist_str):
     # No feature pattern — return unchanged
     return s
 
-def generate_playlist(songs, sp):
+def generate_playlist(songs, sp, omit):
     urilist = []
+    failed = []
     length = len(songs)
     print("Obtaining Track Ids...0%")
     for i in range(length):
-        query = f"track:{songs[i][1]} artist:{extract_main_artist(songs[i][2])}"
+        title = songs[i][2]
+        artist = songs[i][3]
+        if omit and [title, artist] in omit:
+            continue
+        query = f"track:{title} artist:{extract_main_artist(artist)}"
         result = sp.search(q=query, type="track", limit=1)
         track = result.get("tracks", {}).get("items", [])
         try:
             urilist.append(track[0]["uri"])
         except IndexError:
-            (print("Could not obtain song, moving on to next"))
+            failed.append([songs[i][1], title, artist])
+            print("Could not obtain song, moving on to next")
+            print(f'Title: {title}, Artist: {artist}')
         p = float(len(urilist) / length) * 100
         if p < 100:
             print(f"Obtaining Track Ids...{p:.2f}%")
     p = 100
     print(f"Obtaining Track Ids...{p}%")
     print("Obtained All Track Ids!")
-    return urilist
+    return [urilist, failed]
 
 def get_dates(chart):
     df = pd.read_csv(chart, dtype={4: str})

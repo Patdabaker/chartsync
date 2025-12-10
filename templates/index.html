@@ -92,15 +92,22 @@
     <script>
         const chartRanges = {{ chart_dict | tojson }};
         let omit = [];
+        let songs = [];
+        let name = '';
         function buildPayload(form, omit) {
             // collect data from html form
+            let formName = form.playlistName.value;
+            if (formName === '') {
+                formName = name;
+            }
             return {
                 chart: form.chart.value,
                 start: form.startDate.value,
                 end: form.endDate.value,
-                name: form.playlistName.value,
+                name: formName,
                 amount: Number(form.songAmount.value),
-                omit: omit
+                omit: omit,
+                songs: songs
             };
         }
         document.addEventListener("DOMContentLoaded", (event) => {
@@ -142,6 +149,9 @@
                     results.innerHTML = `<p class="error">${data.error}</p`;
                     return;
                 }
+
+                name = data.playlistName;
+                songs = data.songs;
                 // TODO: FIX INNER HTML TO MAKE IT A WINDOW
                 results.innerHTML = `
                     <h2>${data.playlistName}</h2>
@@ -241,6 +251,40 @@
             // Regenerate playlist with deleted in mind
             document.getElementById('regenerate').addEventListener("click", () => {
                 generatePlaylist(buildPayload(form, omit));
+            });
+
+            // Add playlist to spotify
+            document.getElementById('add').addEventListener("click", async () => {
+                // show loading message
+                loading.style.display = 'block';
+                loading.innerHTML = '<p>Adding Playlist... Please Wait</p>';
+                
+                // send data to python route
+                const res = await fetch("/add", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(buildPayload(form, omit))
+                });
+
+                // receive data from python route
+                const data = await res.json();
+
+                // hide results
+                results.style.display = 'none';
+
+                // show success
+                buttons.style.display = 'none';
+                if (data.failed) {
+                    loading.innerHTML = `
+                        <p>Successfully added, check account</p>
+                        <p>Failed to add these songs, add manually</p>
+                        <ol>${data.failed.map(song => `<li>${song}</li>`)}</ol>
+                    `;
+                }
+                else {
+                    loading.innerHTML = "<p>Success</p>"
+                }
+                back.style.display = 'block';
             });
         });
     </script>

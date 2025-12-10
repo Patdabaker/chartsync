@@ -1,9 +1,6 @@
-import base64
 import os
-import pandas as pd
-import requests
 import spotipy
-import urllib
+import time
 from datetime import datetime
 from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, request, url_for, session, render_template
@@ -64,8 +61,8 @@ def generate():
     amount = data['amount']
     omit   = data['omit']
 
-    if name is None:
-        name = "SPG Generated Playlist"
+    if not name:
+        name = f"Top {amount} songs from Billboard's {data['chart']} chart from {start} to {end}"
 
     if chart is None:
         return jsonify({"success": False, "error": "Invalid Chart"}), 400
@@ -96,10 +93,6 @@ def generate():
         print("Playlist too large, cutting process starting")
         cut_playlist(songs, amount)
     set_default_art(songs)
-    # sp = spotipy.Spotify(auth=token)
-    # uri = generate_playlist(songs, sp)
-    # playlist = sp.user_playlist_create(SPOTIFY_USERNAME, name)
-    # sp.playlist_add_items(playlist["id"], uri)
 
     return jsonify({
         "success": True,
@@ -111,6 +104,24 @@ def generate():
         "songs": songs
     })
 
+@app.route("/add", methods=["POST"])
+def add():
+    data = request.get_json()
+    songs = data['songs']
+    name = data['name']
+    omit = data['omit']
+    token_info = get_token()
+    if not token_info:
+        return jsonify({"error": "Not logged in"}), 401
+
+    sp = spotipy.Spotify(auth=token_info["access_token"])
+
+    uri, failed = generate_playlist(songs, sp, omit)[0], generate_playlist(songs, sp, omit)[1]
+    username = session['username']
+    playlist = sp.user_playlist_create(username, name, public=False)
+    sp.playlist_add_items(playlist['id'], uri)
+    return jsonify({"failed": failed})
+
 def get_spotify_oauth():
     return SpotifyOAuth(
         client_id=client_id,
@@ -119,6 +130,22 @@ def get_spotify_oauth():
         scope=scope,
         cache_path=None
     )
+
+def get_token():
+    token_info = session.get("token_info", None)
+
+    if not token_info:
+        return None  # user not logged in
+
+    now = int(time.time())
+
+    # If expired, refresh it
+    if token_info["expires_at"] - now < 60:  # expires in <60 sec
+        sp_oauth = get_spotify_oauth()
+        token_info = sp_oauth.refresh_access_token(token_info["refresh_token"])
+        session["token_info"] = token_info  # save updated token
+
+    return token_info
 
 @app.route("/login")
 def login():
