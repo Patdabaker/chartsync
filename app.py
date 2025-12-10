@@ -3,8 +3,8 @@ import spotipy
 import time
 from datetime import datetime
 from dotenv import load_dotenv
-from flask import Flask, jsonify, redirect, request, url_for, session, render_template
-from generate import create_songlist, cut_playlist, extract_main_artist, generate_playlist, get_dates, set_default_art
+from flask import Flask, jsonify, redirect, request, session, render_template
+from generate import create_songlist, cut_playlist, generate_playlist, get_dates, set_default_art
 from spotipy.oauth2 import SpotifyOAuth
 
 load_dotenv()
@@ -15,7 +15,7 @@ app.secret_key = os.getenv("FLASK_SECRET_KEY")
 client_id=os.getenv('SPOTIFY_CLIENT_ID')
 client_secret=os.getenv('SPOTIFY_CLIENT_SECRET')
 redirect_uri=os.getenv('SPOTIFY_REDIRECT_URI')
-scope=os.getenv('SPOTIFY_SCOPE'),
+scope=os.getenv('SPOTIFY_SCOPE')
 username=os.getenv('SPOTIFY_USERNAME')
 
 chart_dict = {
@@ -63,9 +63,6 @@ def generate():
 
     if not name:
         name = f"Top {amount} songs from Billboard's {data['chart']} chart from {start} to {end}"
-
-    if chart is None:
-        return jsonify({"success": False, "error": "Invalid Chart"}), 400
 
     try:
         start_date = datetime.strptime(start, "%Y-%m-%d")
@@ -120,7 +117,8 @@ def add():
     uri, failed = gp[0], gp[1]
     username = session['username']
     playlist = sp.user_playlist_create(username, name, public=False)
-    sp.playlist_add_items(playlist['id'], uri)
+    for i in range(0, len(uri), 100):
+        sp.playlist_add_items(playlist["id"], uri[i:i+100])
     return jsonify({"success": True, "failed": failed})
 
 def get_spotify_oauth():
@@ -164,6 +162,9 @@ def callback():
     sp_oauth = get_spotify_oauth()
 
     code = request.args.get("code")
+
+    if code is None:
+        return redirect("/?error=access_denied")
 
     token_info = sp_oauth.get_access_token(code, as_dict=True)
 

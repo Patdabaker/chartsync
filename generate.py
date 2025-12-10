@@ -1,14 +1,6 @@
 import pandas as pd
 import re
 
-# token = spotipy.util.prompt_for_user_token(
-#     SPOTIFY_USERNAME,
-#     scope=SPOTIFY_SCOPE,
-#     client_id=SPOTIFY_CLIENT_ID,
-#     client_secret=SPOTIFY_CLIENT_SECRET,
-#     redirect_uri=SPOTIFY_REDIRECT_URI
-# )
-
 FEATURE_PATTERNS = [
     r"\s+feat\.?\s+",
     r"\s+ft\.?\s+",
@@ -113,29 +105,3 @@ def set_default_art(songs):
     for i in range(len(songs)):
         if songs[i][1] == '#':
             songs[i][1] = 'static/images/default_art.png'
-
-# if __name__ == '__main__':
-#     startyear = '2015'
-#     startmonth = '08'
-#     startday = '01'
-#     endyear = '2016'
-#     endmonth = '06'
-#     endday = '01'
-#     chart = "hot100.csv"
-#     name = 'Junior Year'
-#     numsongs = 100
-
-#     start = f"{startyear}-{startmonth}-{startday}"
-#     end = f"{endyear}-{endmonth}-{endday}"
-
-#     songs = create_songlist(start, end, chart, numsongs)
-#     sp = spotipy.Spotify(auth=token)
-#     uri = generate_playlist(songs, sp)
-#     playlist = sp.user_playlist_create(SPOTIFY_USERNAME, name)
-#     print("Playlist Created! Adding Track Ids to Playlist")
-#     if len(uri) > numsongs:
-#         print("Playlist too large, cutting process starting")
-#         cut_playlist(uri, numsongs)
-#     print("Adding all items to Playlist")
-#     sp.playlist_add_items(playlist["id"], uri)
-#     print("Success! Check your spotify account!")
