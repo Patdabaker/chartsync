@@ -112,15 +112,16 @@ def add():
     omit = data['omit']
     token_info = get_token()
     if not token_info:
-        return jsonify({"error": "Not logged in"}), 401
+        return jsonify({"success": False, "error": "Not logged in"}), 401
 
     sp = spotipy.Spotify(auth=token_info["access_token"])
 
-    uri, failed = generate_playlist(songs, sp, omit)[0], generate_playlist(songs, sp, omit)[1]
+    gp = generate_playlist(songs, sp, omit)
+    uri, failed = gp[0], gp[1]
     username = session['username']
     playlist = sp.user_playlist_create(username, name, public=False)
     sp.playlist_add_items(playlist['id'], uri)
-    return jsonify({"failed": failed})
+    return jsonify({"success": True, "failed": failed})
 
 def get_spotify_oauth():
     return SpotifyOAuth(

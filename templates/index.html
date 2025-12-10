@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-    SPG
+    Spotify Playlist Generator Using Billboard's Charts
 {% endblock %}
 
 {% block body %}
@@ -29,11 +29,20 @@
     <main>
         <div id="results" style="display: none">
         </div>
+        <div id="failedSongs" style="display: none">
+        </div>
+        <button id="gap" type="button" hidden>Generate Another Playlist</button>
         <div id="buttons" style="display: none">
-            <button id="back" type="button">Back</button>
-            <button id="regenerate" type="button">Generate Again</button>
-            <button id="deleteChecked" type="button">Remove Selected Songs</button>
-            <button id="add" type="button">Add to Playlist</button>
+        <button id="back" type="button">Back</button>
+        <button id="regenerate" type="button">Generate Again</button>
+        <button id="deleteChecked" type="button">Remove Selected Songs</button>
+            {% if username %}
+                <button id="add" type="button">Add to Spotify</button>
+            {% else %}
+            <button onclick="window.location.href='/login'">
+                Login with Spotify to Add
+            </button>
+            {% endif %}
         </div>
         <form action="/generate" method="post" id="form">
             <div>
@@ -248,6 +257,7 @@
                 form.style.display = 'block';
                 results.innerHTML = '';
                 buttons.style.display = 'none';
+                back.innerHTML = 'Back';
                 omit = [];
             });
 
@@ -272,22 +282,61 @@
                 // receive data from python route
                 const data = await res.json();
 
-                // hide results
-                results.style.display = 'none';
-
-                // show success
+                if (!data.success) {
+                    // show error
+                    results.innerHTML = `<p class="error">${data.error}</p`;
+                    return;
+                }
+                
+                results.innerHTML = `
+                    <p>Successfully added, check Spotify account!</p>
+                    `
+                let failedSongs = document.getElementById('failedSongs');
+                failedSongs.style.display = 'block';
+                failedSongs.innerHTML = `
+                    <br>
+                    <p>Failed to add these songs, consider adding them manually</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Img</th>
+                                <th>Title</th>
+                                <th>Artist</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.failed.map(song => `
+                            <tr>
+                                <td><img src=${song[0]} alt="album art" width="50" height="50"></td>
+                                <td class="title">${song[1]}</td>
+                                <td class="artist">${song[2]}</td>
+                            </tr>
+                            `)}
+                        </tbody>
+                    </table>
+                `;
+                if (data.failed.length === 0) {
+                    failedSongs.style.display = 'none';
+                    failedSongs.innerHTML = '';
+                }
+                loading.style.display = 'none';
+                loading.innerHTML = '';
                 buttons.style.display = 'none';
-                if (data.failed) {
-                    loading.innerHTML = `
-                        <p>Successfully added, check account</p>
-                        <p>Failed to add these songs, add manually</p>
-                        <ol>${data.failed.map(song => `<li>${song}</li>`)}</ol>
-                    `;
-                }
-                else {
-                    loading.innerHTML = "<p>Success</p>"
-                }
-                back.style.display = 'block';
+                let gap = document.getElementById('gap');
+                gap.hidden = false;
+                gap.addEventListener("click", () => {
+                    results.style.display = 'none';
+                    form.style.display = 'block';
+                    results.innerHTML = '';
+                    buttons.style.display = 'none';
+                    back.innerHTML = 'Back';
+                    failedSongs.style.display = 'none';
+                    gap.hidden = true;
+                    form.reset();
+                    startDate.hidden = true;
+                    endDate.hidden = true;
+                    omit = [];
+                });
             });
         });
     </script>
