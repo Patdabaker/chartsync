@@ -153,6 +153,11 @@ def login():
     url = sp_oauth.get_authorize_url()
     return redirect(url)
 
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
+
 @app.route("/callback")
 def callback():
     sp_oauth = get_spotify_oauth()
