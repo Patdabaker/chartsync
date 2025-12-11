@@ -5,26 +5,28 @@
 {% endblock %}
 
 {% block body %}
-    <header>
-        <h1>Spotify Playlist Generator</h1>
-        <p>Generate playlists from billboard top 100 or something</p>
-        {% if username %}
-            <div class="user-info">
-                {% if session.get('profile_pic') %}
-                    <img src="{{ session.profile_pic }}" alt="Profile Picture" width="40">
+<header class="header">
+    <div class="header-top">
+        <h1 class="title">Spotify Playlist Generator</h1>
+
+        <div class="user-info">
+            {% if username %}
+                {% if session.profile_pic %}
+                    <img src="{{ session.profile_pic }}" alt="Profile Picture">
                 {% endif %}
                 <span>Welcome, {{ username }}!</span>
-            </div>
-            <button onclick="window.location.href='/logout'">
-                Logout
-            </button>
-        {% else %}
-        <button onclick="window.location.href='/login'">
-            Login with Spotify
-        </button>
-        {% endif %}
+                <button onclick="window.location.href='/logout'">Logout</button>
+            {% else %}
+                <button onclick="window.location.href='/login'">Login with Spotify</button>
+            {% endif %}
+        </div>
+    </div>
 
-    </header>
+    <p class="header-subtitle">
+        Your music, your rules — build playlists from decades of Billboard&trade; hits.
+    </p>
+</header>
+
 
     <main>
         <div id="results" style="display: none">
@@ -46,7 +48,7 @@
         </div>
         <form action="/generate" method="post" id="form">
             <div>
-                <h2>Chart Type</h2>
+                <h2>Chart Name</h2>
                 <select id="chart" name="chart" required>
                     <option disabled selected value="">Select Chart</option>
                     {% for title in chart_dict %}
@@ -84,9 +86,6 @@
             <div>
                 <button type="submit">Generate Playlist</button>
             </div>
-
-            <br>
-
             <div>
                 <button type="reset">Reset Fields</button>
             </div>

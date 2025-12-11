@@ -64,10 +64,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
         name = data.playlistName;
         songs = data.songs;
-        // TODO: FIX INNER HTML TO MAKE IT A WINDOW
+
         results.innerHTML = `
             <h2>${data.playlistName}</h2>
-            <p>Feel free to edit</p>
+            <p>Fine-tune your playlist: remove tracks with the checkboxes and regenerate, or save your curated version to Spotify</p>
             <table>
                 <thead>
                     <tr>
@@ -87,10 +87,23 @@ document.addEventListener("DOMContentLoaded", (event) => {
                         <td class="artist">${song[3]}</td>
                         <td><input type="checkbox" class="song-checkbox"></td>
                     </tr>
-                    `)}
+                    `).join('')}
                 </tbody>
             </table>
         `;
+
+        // Highlight whole row if checkbox is checked
+        document.addEventListener("change", e => {
+        if (e.target.classList.contains('song-checkbox')) {
+            const row = e.target.closest("tr");
+            if (e.target.checked) {
+                row.classList.add("highlighted");
+            } else {
+                row.classList.remove("highlighted");
+            }
+        }
+});
+
     };
 
     select.addEventListener("change", () => {
@@ -107,18 +120,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
         } 
     });
 
-    startDateInput.addEventListener("change", () => {
-        if (endDateInput.value !== "" && startDateInput.value > endDateInput.value) {
-            endDateInput.value = "";
-        }
-    });
-
-    endDateInput.addEventListener("change", () => {
-        if (startDateInput.value !== "" && endDateInput.value < startDateInput.value) {
-            startDateInput.value = "";
-        }
-    });
-
     // reset fields
     form.addEventListener("reset", () => {
         form.reset();
@@ -127,6 +128,14 @@ document.addEventListener("DOMContentLoaded", (event) => {
     });
 
     form.addEventListener("submit", async (e) => {
+        const sdi = startDateInput.value;
+        const edi = endDateInput.value;
+
+        if (sdi && edi && sdi > edi) {
+            e.preventDefault();
+            alert("Start date must be before end date");
+            return;
+        }
         // prevent form submit and page reload
         e.preventDefault();
 
@@ -161,6 +170,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         buttons.style.display = 'none';
         back.innerHTML = 'Back';
         omit = [];
+        name = '';
     });
 
     // Regenerate playlist with deleted in mind
@@ -217,7 +227,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
                         <td class="title">${song[1]}</td>
                         <td class="artist">${song[2]}</td>
                     </tr>
-                    `)}
+                    `).join('')}
                 </tbody>
             </table>
         `;

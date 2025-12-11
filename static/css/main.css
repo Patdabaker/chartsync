@@ -1,0 +1,326 @@
+/* --------- GLOBAL PAGE STYLING --------- */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', 'Roboto', sans-serif;
+    background-color: #121212;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Smooth fade-in for everything */
+* {
+    transition: 0.2s ease;
+}
+
+
+
+/* --------- HEADER --------- */
+
+header {
+    padding: 20px;
+    border-bottom: 1px solid #333;
+}
+
+.header-top {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* center the title horizontally */
+    position: relative; /* needed so the right side can position relative */
+}
+
+.header-top .title {
+    font-size: 32px;
+    font-weight: bold;
+    margin: 0;
+    text-align: center;
+    flex-grow: 1; /* take available space */
+}
+
+.user-info {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%); /* vertically center it on the top row */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-info img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.header-subtitle {
+    text-align: center;
+    margin-top: 8px;
+    font-size: 16px;
+    color: #b3b3b3;
+}
+
+
+header button {
+    background-color: #1db954;
+    color: black;
+    border: none;
+    padding: 8px 14px;
+    font-size: 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    width: fit-content;
+    font-weight: 600;
+}
+
+header button:hover {
+    background-color: #1ed760;
+}
+
+
+
+/* --------- MAIN LAYOUT --------- */
+
+main {
+    padding: 30px;
+    max-width: 900px;
+    width: 100%;
+    margin: auto;
+}
+
+
+
+/* --------- FORM STYLING --------- */
+
+#form {
+    background: #181818;
+    padding: 25px;
+    border-radius: 8px;
+    border: 1px solid #282828;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#form h2 {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+#form input,
+#form select {
+    background-color: #282828;
+    border: 1px solid #3e3e3e;
+    padding: 10px;
+    border-radius: 6px;
+    color: white;
+    width: 100%;
+    font-size: 14px;
+}
+
+#form input:focus,
+#form select:focus {
+    outline: none;
+    border-color: #1db954;
+}
+
+#form button[type="submit"],
+#form button[type="reset"] {
+    margin-top: 10px;
+}
+
+#form button {
+    background-color: #1db954;
+    color: black;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+#form button:hover {
+    background-color: #1ed760;
+}
+
+
+
+/* --------- RESULTS WINDOW --------- */
+
+/* The outside container */
+#results {
+    background: #181818;
+    border: 1px solid #282828;
+    border-radius: 10px;
+    padding: 20px;
+    max-height: 500px;        /* scrollable */
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+/* Hide scrollbar on Chrome */
+#results::-webkit-scrollbar {
+    width: 8px;
+}
+#results::-webkit-scrollbar-thumb {
+    background: #3e3e3e;
+    border-radius: 10px;
+}
+
+/* Highlight entire row when its checkbox is checked */
+tr.highlighted {
+    background-color: #1db954;
+}
+
+tbody tr.selected {
+    background-color: rgba(30, 215, 96, 0.2); 
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+}
+
+tbody tr:hover {
+    background-color: rgba(30, 215, 96, 0.1);
+    cursor: pointer;
+}
+
+/* ------- FAILED SONGS WINDOW ------- */
+#failedSongs {
+    background: #181818;
+    border: 1px solid #282828;
+    border-radius: 10px;
+    padding: 20px;
+    max-height: 500px;        /* scrollable */
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+/* Hide scrollbar on Chrome */
+#failedSongs::-webkit-scrollbar {
+    width: 8px;
+}
+#failedSongs::-webkit-scrollbar-thumb {
+    background: #3e3e3e;
+    border-radius: 10px;
+}
+
+/* --------- BUTTON PANEL BELOW RESULTS --------- */
+
+#buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#buttons button {
+    background-color: #1db954;
+    color: black;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+#buttons button:hover {
+    background-color: #1ed760;
+}
+
+#gap {
+    background-color: #1db954;
+    color: black;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+#gap button:hover {
+    background-color: #1ed760;
+}
+
+
+/* --------- TABLE STYLING --------- */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th {
+    text-align: left;
+    padding: 10px;
+    font-size: 14px;
+    border-bottom: 1px solid #333;
+    color: #b3b3b3;
+}
+
+td {
+    padding: 10px;
+    font-size: 14px;
+    border-bottom: 1px solid #282828;
+}
+
+td img {
+    border-radius: 4px;
+}
+
+
+
+/* --------- LOADING SPINNER --------- */
+
+#loading {
+    text-align: center;
+    margin: 20px 0;
+    color: #1db954;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* Spinner animation */
+#loading::after {
+    content: "";
+    display: inline-block;
+    margin-left: 10px;
+    width: 16px;
+    height: 16px;
+    border: 3px solid #1db954;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+
+
+/* --------- ERROR MESSAGE --------- */
+.error {
+    color: #ff4747;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+
+
+/* --------- MOBILE RESPONSIVE --------- */
+@media (max-width: 700px) {
+    header h1 {
+        font-size: 26px;
+    }
+    
+    #form, #results {
+        padding: 15px;
+    }
+
+    table td, table th {
+        padding: 8px;
+        font-size: 12px;
+    }
+}
