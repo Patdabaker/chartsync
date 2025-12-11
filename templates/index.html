@@ -1,14 +1,16 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Spotify Playlist Generator Using Billboard's Charts
+    ChartSync – Billboard → Spotify Playlist Generator
 {% endblock %}
 
 {% block body %}
 <header class="header">
     <div class="header-top">
-        <h1 class="title">Spotify Playlist Generator</h1>
-
+        <div class="title-group">
+            <h1 class="title">ChartSync</h1>
+            <h2 class="subtitle">Billboard → Spotify Playlist Generator</h2>
+        </div>
         <div class="user-info">
             {% if username %}
                 {% if session.profile_pic %}
@@ -95,11 +97,6 @@
 
         </div>
     </main>
-
-    <footer>
-        <p>Copyright Patdabaker</p>
-    </footer>
-    
     <script>
         const chartRanges = {{ chart_dict | tojson }};
     </script>

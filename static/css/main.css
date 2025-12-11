@@ -26,17 +26,26 @@ header {
 
 .header-top {
     display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.title-group {
+    display: flex;
+    flex-direction: column; /* <-- stack title and subtitle vertically */
     align-items: center;
-    justify-content: center; /* center the title horizontally */
-    position: relative; /* needed so the right side can position relative */
 }
 
 .header-top .title {
-    font-size: 32px;
-    font-weight: bold;
+    font-size: 2.2rem;
+    font-weight: 700;
     margin: 0;
-    text-align: center;
-    flex-grow: 1; /* take available space */
+}
+
+.header-top .subtitle {
+    font-size: 1.15rem;
+    font-weight: 400;
+    margin: 4px 0 0 0;
 }
 
 .user-info {
@@ -173,7 +182,7 @@ main {
 tr.highlighted {
     background-color: #1db954;
 }
-
+/* 
 tbody tr.selected {
     background-color: rgba(30, 215, 96, 0.2); 
     transition: background-color 0.2s ease;
@@ -183,7 +192,7 @@ tbody tr.selected {
 tbody tr:hover {
     background-color: rgba(30, 215, 96, 0.1);
     cursor: pointer;
-}
+} */
 
 /* ------- FAILED SONGS WINDOW ------- */
 #failedSongs {

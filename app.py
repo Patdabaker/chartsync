@@ -16,7 +16,6 @@ client_id=os.getenv('SPOTIFY_CLIENT_ID')
 client_secret=os.getenv('SPOTIFY_CLIENT_SECRET')
 redirect_uri=os.getenv('SPOTIFY_REDIRECT_URI')
 scope=os.getenv('SPOTIFY_SCOPE')
-username=os.getenv('SPOTIFY_USERNAME')
 
 chart_dict = {
     "Hot 100": {
@@ -127,7 +126,8 @@ def get_spotify_oauth():
         client_secret=client_secret,
         redirect_uri=redirect_uri,
         scope=scope,
-        cache_path=None
+        cache_path=None,
+        show_dialog=True
     )
 
 def get_token():
