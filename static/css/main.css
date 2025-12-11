@@ -332,4 +332,9 @@ td img {
         padding: 8px;
         font-size: 12px;
     }
+
+    .user-info {
+        top: 0%;
+        transform: translateY(350%);
+    }
 }
