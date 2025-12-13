@@ -43,19 +43,14 @@ document.addEventListener("DOMContentLoaded", (event) => {
         // receive data from python route
         const data = await res.json();
 
-        if (!res.ok) {
-            results.innerHTML = `<p class="error">Server error. Try again.</p>`;
-            return;
-        }
-
         // hide form
         form.style.display = 'none';
 
         // show results
-        results.style.display = 'block';
+        results.style.display = 'block';  
         buttons.style.display = 'block';
         loading.style.display = 'none';
-
+        
         if (!data.success) {
             // show error
             results.innerHTML = `<p class="error">${data.error}</p>`;
@@ -193,14 +188,12 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
         // receive data from python route
         const data = await res.json();
-        if (!res.ok) {
-            results.innerHTML = `<p class="error">Server error. Try again.</p>`;
-            return;
-        }
+
+        results.style.display = 'block';
 
         if (!data.success) {
             // show error
-            results.innerHTML = `<p class="error">${data.error}</p`;
+            results.innerHTML = `<p class="error">${data.error}</p>`;
             return;
         }
         

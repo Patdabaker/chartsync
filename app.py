@@ -52,7 +52,7 @@ def generate():
     try:
         csv = chart_dict[data['chart']]
     except KeyError:
-        return jsonify({"success": False, "error": "Invalid Chart"}), 400
+        return jsonify({"success": False, "error": "Invalid Chart. Try Again."}), 400
     chart  = csv['name']
     start  = data['start']
     end    = data['end']
@@ -66,22 +66,22 @@ def generate():
     try:
         start_date = datetime.strptime(start, "%Y-%m-%d")
     except ValueError:
-        return jsonify({"success": False, "error": "Invalid Start Date"}), 400
+        return jsonify({"success": False, "error": "Invalid Start Date. Try Again."}), 400
     try:
         end_date = datetime.strptime(end, "%Y-%m-%d")
     except ValueError:
-        return jsonify({"success": False, "error": "Invalid End Date"}), 400
+        return jsonify({"success": False, "error": "Invalid End Date. Try Again."}), 400
     date_min = datetime.strptime(csv['min'], "%Y-%m-%d")
     date_max = datetime.strptime(csv['max'], "%Y-%m-%d")
 
     if start is None or start_date < date_min or start_date > date_max:
-        return jsonify({"success": False, "error": "Invalid Start Date"}), 400
+        return jsonify({"success": False, "error": "Invalid Start Date. Try Again."}), 400
     if end is None or end_date < date_min or end_date > date_max:
-        return jsonify({"success": False, "error": "Invalid End Date"}), 400
+        return jsonify({"success": False, "error": "Invalid End Date. Try Again."}), 400
     if start_date > end_date:
-        return jsonify({"success": False, "error": "Invalid Date Range"}), 400
+        return jsonify({"success": False, "error": "Invalid Date Range. Try Again."}), 400
     if amount is None or isinstance(amount, float) or amount <= 0:
-        return jsonify({"success": False, "error": "Invalid Song Amount"}), 400
+        return jsonify({"success": False, "error": "Invalid Song Amount. Try Again."}), 400
 
     print(omit)
     songs = create_songlist(start, end, chart, amount, omit)
